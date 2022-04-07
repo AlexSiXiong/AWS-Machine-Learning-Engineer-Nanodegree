@@ -8,7 +8,7 @@
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "your aws role"
+        "FunctionName": "arn:aws:lambda:your aws account info:function:serializeData:$LATEST"
       },
       "Retry": [
         {
@@ -30,7 +30,7 @@
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "your aws role"
+        "FunctionName": "arn:aws:lambda:your aws account info:function:classification:$LATEST"
       },
       "Retry": [
         {
@@ -52,7 +52,7 @@
       "OutputPath": "$.Payload",
       "Parameters": {
         "Payload.$": "$",
-        "FunctionName": "your aws role"
+        "FunctionName": "arn:aws:lambda:your aws account info:function:filterInference:$LATEST"
       },
       "Retry": [
         {
@@ -66,7 +66,26 @@
           "BackoffRate": 2
         }
       ],
-      "End": true
-    }
+      "End": true,
+      "Catch": [
+          {
+            "ErrorEquals": [ "States.ALL" ],
+            "Next": "Send message to SNS"
+          }
+      ]
+      
+    },
+    
+    "Send message to SNS": {
+  "Type": "Task",
+  "Resource": "arn:aws:states:::sns:publish",
+  "Parameters": {
+    "Message": {
+      "Input": "Image Classification Error."
+    },
+    "PhoneNumber": "your phone number"
+  },
+"End": true
+}
   }
 }
